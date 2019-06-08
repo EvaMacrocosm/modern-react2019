@@ -1,38 +1,34 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import CommentDetail from './CommentDetails';
-import ApprovalCard from './ApprovalCard';
-import faker from "faker";
+import SeasonDisplay from './SeasonDisplay';
 
-const App = () => {
-    return (
-        <div className='ui container comments'>
-            <ApprovalCard>
-                <CommentDetail
-                    author='Jim'
-                    timeAgo='13:23'
-                    content='Time for what?'
-                    avatar={faker.image.avatar()}
-                />
-            </ApprovalCard>
-            <ApprovalCard>
-                <CommentDetail
-                    author='Mary'
-                    timeAgo='13:24'
-                    content='Revolution'
-                    avatar={faker.image.avatar()}
-                />
-            </ApprovalCard>
-            <ApprovalCard>
-                <CommentDetail
-                    author='Lulu'
-                    timeAgo='13:25'
-                    content='Oppps'
-                    avatar={faker.image.avatar()}
-                />
-            </ApprovalCard>
-        </div>
-    );
-};
+class App extends React.Component {
+    constructor(props) {
+        super(props);
+
+        this.state = { lat: '', errorMessage: '' }
+
+        window.navigator.geolocation.getCurrentPosition(
+            position => {
+                this.setState({ lat: position.coords.latitude });
+            },
+            err => {
+                this.setState({ errorMessage: err.message });
+            }
+        );
+    }
+
+    render() {
+        if (this.state.errorMessage && !this.state.lat) {
+            return <div>Error: {this.state.errorMessage}</div>
+        }
+
+        if (!this.state.errorMessage && this.state.lat) {
+            return <div>Lat: {this.state.lat}</div>
+        }
+
+        return <div>Loading!</div>
+    }
+}
 
 ReactDOM.render(<App />, document.querySelector('#root'));
